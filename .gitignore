@@ -1,2 +1,13 @@
 
 .idea/
+.target/
+target/.DS_Store
+target/classes/com/example/final6205/Controller.class
+target/classes/com/example/final6205/DAO.class
+target/classes/com/example/final6205/FileHistoryRecord.class
+target/classes/com/example/final6205/Main.class
+target/classes/com/example/final6205/RedisFile.class
+target/classes/com/example/final6205/sample.fxml
+target/classes/com/example/final6205/SimpleDeque$Node.class
+target/classes/com/example/final6205/SimpleDeque.class
+target/classes/module-info.class

@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.geometry.Insets?>
 
-<VBox spacing="10" alignment="CENTER" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.final6205.Controller">
-    <Button fx:id="encryptButton" text="Encrypt" onAction="#onEncryptButtonClick" />
-    <Button fx:id="decryptButton" text="Decrypt" onAction="#onDecryptButtonClick" />
-    <Button fx:id="historyButton" layoutX="300" layoutY="250" text="View History" onAction="#onHistoryButtonClick"/>
-    <TextArea fx:id="outputArea" promptText="Output" wrapText="true"/>
+<VBox alignment="CENTER" prefHeight="395.0" prefWidth="301.0" spacing="10" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21" fx:controller="com.example.final6205.Controller">
+    <Button fx:id="encryptButton" onAction="#onEncryptButtonClick" text="Encrypt" />
+    <Button fx:id="decryptButton" onAction="#onDecryptButtonClick" text="Decrypt" />
+    <Button fx:id="historyButton" layoutX="300" layoutY="250" onAction="#onHistoryButtonClick" text="View History" />
+   <Button fx:id="recentButton" mnemonicParsing="false" onAction="#onRecentButtonClick" text="RecentFile" />
+   <Button fx:id="RankButton" mnemonicParsing="false" onAction="#onRankButtonClick" text="RankFile" />
 </VBox>
