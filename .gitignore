@@ -1,5 +1,5 @@
 .idea/
-.target/
+target/
 target/.DS_Store
 target/classes/com/example/final6205/Controller.class
 target/classes/com/example/final6205/DAO.class
