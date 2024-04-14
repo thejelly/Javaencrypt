@@ -16,6 +16,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>3.6.0</version> <!-- 请使用最新的稳定版本 -->
+        </dependency>
+        <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>20.0.1</version>
