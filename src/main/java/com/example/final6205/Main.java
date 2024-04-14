@@ -18,13 +18,14 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
-        try {
+        /*try {
             Jedis jedis = new Jedis("redis://default:AZakgtcbhlfdAvJx3DFrHHz7S3i8szYs@redis-15882.c10.us-east-1-4.ec2.cloud.redislabs.com:15882");
             System.out.println("连接成功，服务正在运行: " + jedis.ping());
         } catch (Exception e) {
             e.printStackTrace(); // 打印出错误详情
             System.out.println("连接失败: " + e.getMessage());
-        }
+        } */
+        launch(args);
+
     }
 }
