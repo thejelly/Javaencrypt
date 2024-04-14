@@ -10,6 +10,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
+import com.google.gson.Gson;
 
 public class Controller {
 
@@ -25,6 +27,7 @@ public class Controller {
     private ArrayList<FileHistoryRecord> fileHistoryRecords = new ArrayList<>();
 
     @FXML
+    //encrupt按钮点击事件，打开一个对话框选中文件并且执行processfile
     private void onEncryptButtonClick() {
         File file = chooseFile("Choose File to Encrypt");
         if (file != null) {
@@ -51,8 +54,22 @@ public class Controller {
         if (fileContent != null) {
             byte[] processedContent = encrypt ? messUp(fileContent) : fix(fileContent);
             String processedFileName = generateProcessedFileName(file.getName(), encrypt);
+            //用加密后的名字创建新的文件 outfile
             File outFile = new File(file.getParent(), processedFileName);
             writeFile(processedContent, outFile);
+            //获取outFile的地址
+            String filePath = outFile.getPath();
+            String uuid = UUID.randomUUID().toString();
+            //创建可传入redis的redisFile
+            RedisFile redisFile = new RedisFile(outFile,filePath,uuid);
+            //把redisFile转换成gson
+            Gson gson = new Gson();
+            String redisJson = gson.toJson(redisFile);
+            //把redisFile 和uuid 导入哈希表
+            DAO dao = new DAO();
+            dao.saveFileToRedis(uuid,redisJson);
+            //双端队列导入redisFile对象
+            dao.dequeAdd(redisJson);
             recordFileHistory(file.getAbsolutePath(), outFile.getAbsolutePath(), encrypt ? "Encrypt" : "Decrypt");
         }
     }
