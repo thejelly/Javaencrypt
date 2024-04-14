@@ -1,6 +1,7 @@
 package com.example.final6205;
 import java.util.UUID;
 import redis.clients.jedis.Jedis;
+import java.util.Map;
 public class DAO {
     //dao 实现的主要是数据库的访问，修改，增加，删除；
     // dao 实现了返回 hashmap和双端队列
@@ -55,7 +56,17 @@ public class DAO {
 
     }
     public void getRestDeque(){
-        // 获取队列的剩余元素
-        System.out.println("Remaining elements: " + jedis.lrange(dequeKey, 0, -1));
+        java.util.List<String> elements = jedis.lrange(dequeKey, 0, -1);  // 返回队列中所有元素的列表
+        for (String element : elements) {
+            System.out.println(element);
+        }
     }
+
+
+    public void getmap(){
+        Map<String, String> filemap = jedis.hgetAll("filesystem");
+        filemap.forEach((field, value) -> System.out.println(field + ": " + value));
+        //return filemap;
+    }
+
 }

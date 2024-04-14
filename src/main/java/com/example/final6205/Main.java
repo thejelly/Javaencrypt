@@ -18,6 +18,9 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+       // DAO dao = new DAO();
+       // dao.getmap();
+        //dao.getRestDeque();
         /*try {
             Jedis jedis = new Jedis("redis://default:AZakgtcbhlfdAvJx3DFrHHz7S3i8szYs@redis-15882.c10.us-east-1-4.ec2.cloud.redislabs.com:15882");
             System.out.println("连接成功，服务正在运行: " + jedis.ping());
@@ -26,6 +29,8 @@ public class Main extends Application {
             System.out.println("连接失败: " + e.getMessage());
         } */
         launch(args);
+        //测试数据库返回map和deque
+
 
     }
 }
