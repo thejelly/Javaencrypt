@@ -1,9 +1,14 @@
 package com.example.final6205;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
 import javafx.scene.control.Alert;
+import javafx.stage.Stage;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,13 +21,19 @@ import com.google.gson.Gson;
 public class Controller {
 
     @FXML
-    private Button encryptButton;
+    private Button RankButton;
 
     @FXML
     private Button decryptButton;
 
     @FXML
+    private Button encryptButton;
+
+    @FXML
     private Button historyButton;
+
+    @FXML
+    private Button recentButton;
 
     private ArrayList<FileHistoryRecord> fileHistoryRecords = new ArrayList<>();
 
@@ -160,4 +171,33 @@ public class Controller {
     }
 
     // Other methods and logic as needed
+    @FXML
+    private void onRankButtonClick() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("rankpage.fxml"));
+        Parent root = loader.load();
+
+        // 创建新窗口的 Stage 和 Scene
+        Stage newStage = new Stage();
+        Scene scene = new Scene(root);
+
+        newStage.setScene(scene);
+        newStage.setTitle("Files Rank");
+        newStage.show();
+
+    }
+
+    @FXML
+    private void onRecentButtonClick() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("recentlist.fxml"));
+        Parent root = loader.load();
+
+        // 创建新窗口的 Stage 和 Scene
+        Stage newStage = new Stage();
+        Scene scene = new Scene(root);
+
+        newStage.setScene(scene);
+        newStage.setTitle("Recent file");
+        newStage.show();
+
+    }
 }
