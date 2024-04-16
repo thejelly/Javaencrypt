@@ -13,10 +13,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HexFormat;
 import java.util.UUID;
 import com.google.gson.Gson;
+import java.security.MessageDigest;
 
 public class Controller {
 
@@ -63,6 +68,7 @@ public class Controller {
     private void processFile(File file, boolean encrypt) {
         byte[] fileContent = readFile(file);
         if (fileContent != null) {
+            DAO dao = new DAO();
             byte[] processedContent = encrypt ? messUp(fileContent) : fix(fileContent);
             String processedFileName = generateProcessedFileName(file.getName(), encrypt);
             //用加密后的名字创建新的文件 outfile
@@ -72,18 +78,24 @@ public class Controller {
             String filePath = outFile.getPath();
             String uuid = UUID.randomUUID().toString();
             //创建可传入redis的redisFile
-            RedisFile redisFile = new RedisFile(outFile,filePath,uuid);
+            RedisFile redisFile = new RedisFile(outFile, filePath, uuid);
             //把redisFile转换成gson
             Gson gson = new Gson();
             String redisJson = gson.toJson(redisFile);
             //把redisFile 和uuid 导入哈希表
-            DAO dao = new DAO();
-            dao.saveFileToRedis(uuid,redisJson);
-            //双端队列导入redisFile对象
-            dao.dequeAdd(redisJson);
+           if(!dao.checkhave(filePath)) {
+               dao.saveFileToRedis(uuid, redisJson);
+               System.out.println("压入hashmap");
+           }
+           else {
+               System.out.println("该文件已经存在于hashmap,不会再加入数据库hashmap统计");
+           }
+           //判断是否重复，然后推入队列
+            dao.addOrUpdateFile(filePath);
             recordFileHistory(file.getAbsolutePath(), outFile.getAbsolutePath(), encrypt ? "Encrypt" : "Decrypt");
         }
     }
+
 
     private byte[] readFile(File file) {
         try (FileInputStream fis = new FileInputStream(file)) {
@@ -198,6 +210,45 @@ public class Controller {
         newStage.setScene(scene);
         newStage.setTitle("Recent file");
         newStage.show();
+
+    }
+
+    /**
+     * 计算文件的 SHA-256 哈希值
+     *
+     * @param filePath 文件路径
+     * @return 返回文件的哈希值，以十六进制字符串形式
+     */
+    public static String calculateFileHash(String filePath) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            FileInputStream fis = new FileInputStream(filePath);
+
+            byte[] byteArray = new byte[1024];
+            int bytesCount = 0;
+
+            // 读取文件数据并更新到摘要
+            while ((bytesCount = fis.read(byteArray)) != -1) {
+                digest.update(byteArray, 0, bytesCount);
+            }
+            ;
+
+            fis.close();
+
+            // 获取文件的哈希值字节
+            byte[] bytes = digest.digest();
+
+            // 把哈希值转换成十六进制值
+            StringBuilder sb = new StringBuilder();
+            for (byte b : bytes) {
+                sb.append(String.format("%02x", b));
+            }
+
+            return sb.toString();
+        } catch (NoSuchAlgorithmException | IOException e) {
+            e.printStackTrace();
+            return null;
+        }
 
     }
 }

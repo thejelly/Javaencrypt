@@ -1,5 +1,11 @@
 package com.example.final6205;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.util.HexFormat;
 import java.util.UUID;
+
+import com.google.gson.Gson;
 import redis.clients.jedis.Jedis;
 import java.util.Map;
 public class DAO {
@@ -38,23 +44,9 @@ public class DAO {
         }
         return value;
     }
-    public void dequeAdd(String uuid){
 
-        // 在队列头部添加元素
-        jedis.lpush(dequeKey, uuid);
 
-       /* // 从队列头部移除元素
-        String headElement = jedis.lpop(dequeKey);
-        System.out.println("Popped from head: " + headElement);*/
-
-        /*// 从队列尾部移除元素
-        String tailElement = jedis.rpop(dequeKey);
-        System.out.println("Popped from tail: " + tailElement);
-
-        // 获取队列的剩余元素
-        System.out.println("Remaining elements: " + jedis.lrange(dequeKey, 0, -1));*/
-
-    }
+    //返回双端队列
     public void getRestDeque(){
         java.util.List<String> elements = jedis.lrange(dequeKey, 0, -1);  // 返回队列中所有元素的列表
         for (String element : elements) {
@@ -62,11 +54,40 @@ public class DAO {
         }
     }
 
-
+    //返回全部文件hashmap，
     public void getmap(){
         Map<String, String> filemap = jedis.hgetAll("filesystem");
         filemap.forEach((field, value) -> System.out.println(field + ": " + value));
         //return filemap;
     }
+    /*把文件加入队列
+    /
+     */
+    public void addOrUpdateFile(String filePath) {
+        String fileHash = Controller.calculateFileHash(filePath); // 假设这个方法返回文件内容的哈希值
+        boolean exists = jedis.hexists("fileIndex", fileHash);
 
-}
+        if (exists) {
+            // 如果文件已存在，移除旧的队列项
+            System.out.println("该文件已经存在，移除旧的队列项目");
+            jedis.lrem(dequeKey, 0, filePath);
+        }
+
+        // 将文件加到队列头部
+        jedis.lpush(dequeKey, filePath);
+        // 更新哈希表信息，例如使用当前时间戳作为“最后访问”
+        jedis.hset("fileIndex", fileHash, String.valueOf(System.currentTimeMillis()));
+        System.out.println("该文件已经压入dq");
+    }
+    public boolean checkhave(String filePath){
+        String fileHash = Controller.calculateFileHash(filePath); // 假设这个方法返回文件内容的哈希值
+        boolean check = jedis.hexists("fileIndex", fileHash);
+
+        return check;
+
+    }
+    }
+
+
+
+
