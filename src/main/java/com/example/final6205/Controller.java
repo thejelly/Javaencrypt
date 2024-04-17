@@ -48,6 +48,11 @@ public class Controller {
         File file = chooseFile("Choose File to Encrypt");
         if (file != null) {
             processFile(file, true);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Encrypt File");
+            alert.setHeaderText(null);
+            alert.setContentText("Encrypted File: " + file.getName()+"  success");
+            alert.showAndWait();
         }
     }
 
@@ -56,6 +61,11 @@ public class Controller {
         File file = chooseFile("Choose File to Decrypt");
         if (file != null) {
             processFile(file, false);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Decrypt File");
+            alert.setHeaderText(null);
+            alert.setContentText("Decrypted File: " + file.getName()+"  success");
+            alert.showAndWait();
         }
     }
 
