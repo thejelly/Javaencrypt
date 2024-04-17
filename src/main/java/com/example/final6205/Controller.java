@@ -189,7 +189,7 @@ public class Controller {
         Scene scene = new Scene(root);
 
         newStage.setScene(scene);
-        newStage.setTitle("Files Rank");
+        newStage.setTitle("Recent File");
         newStage.show();
 
     }
@@ -204,7 +204,7 @@ public class Controller {
         Scene scene = new Scene(root);
 
         newStage.setScene(scene);
-        newStage.setTitle("Recent file");
+        newStage.setTitle("Rank File");
         newStage.show();
 
     }
