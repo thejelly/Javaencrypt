@@ -156,7 +156,7 @@ public class Controller {
     }
 
     private void recordFileHistory(String originalPath, String processedPath, String operation) {
-        FileHistoryRecord record = new FileHistoryRecord(originalPath, processedPath, operation);
+       FileHistoryRecord record = new FileHistoryRecord(originalPath, processedPath, operation);
         fileHistoryRecords.add(record);
         // Use the processed path for quick lookup of the history.
 

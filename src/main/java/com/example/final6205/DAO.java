@@ -6,6 +6,7 @@ import java.util.HexFormat;
 import java.util.UUID;
 
 import com.google.gson.Gson;
+import redis.clients.jedis.BinaryClient;
 import redis.clients.jedis.Jedis;
 import java.util.Map;
 public class DAO {
@@ -55,16 +56,28 @@ public class DAO {
     }
 
     //返回全部文件hashmap，
-    public void getmap(){
+    public SimpleHashMap<String,String> getmap(){
         Map<String, String> filemap = jedis.hgetAll("filesystem");
         filemap.forEach((field, value) -> System.out.println(field + ": " + value));
-        //return filemap;
+
+        SimpleHashMap<String, String> myMap = new SimpleHashMap<>();
+
+        filemap.forEach((field, value) -> {
+            myMap.put(field, value);  // 将每个键值对添加到 SimpleHashMap
+        });
+        return myMap;
+
+
+
     }
+        //return filemap;
+
     /*把文件加入队列
     /
      */
     public void addOrUpdateFile(String filePath) {
         String fileHash = Controller.calculateFileHash(filePath); // 假设这个方法返回文件内容的哈希值
+
         boolean exists = jedis.hexists("fileIndex", fileHash);
 
         if (exists) {
@@ -77,7 +90,7 @@ public class DAO {
         jedis.lpush(dequeKey, filePath);
         // 更新哈希表信息，例如使用当前时间戳作为“最后访问”
         jedis.hset("fileIndex", fileHash, String.valueOf(System.currentTimeMillis()));
-        System.out.println("该文件已经压入dq");
+        System.out.println("该文件已经压入双端队列");
     }
     public boolean checkhave(String filePath){
         String fileHash = Controller.calculateFileHash(filePath); // 假设这个方法返回文件内容的哈希值
