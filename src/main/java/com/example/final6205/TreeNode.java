@@ -24,4 +24,6 @@ class TreeNode<K, V> {
         this.right = null;
         this.red = true; // 新节点默认为红色
     }
+    public K getKey() { return key; }
+    public V getValue() { return value; }
 }

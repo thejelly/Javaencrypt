@@ -1,5 +1,7 @@
 package com.example.final6205;
 
+import java.util.List;
+
 public class SimpleDeque<E> {
     private Node<E> head; // Front node of the deque
     private Node<E> tail; // Rear node of the deque
@@ -19,6 +21,12 @@ public class SimpleDeque<E> {
         head = null;
         tail = null;
         size = 0;
+    }
+    public SimpleDeque(List<E> list) {
+        this(); // Calls the default constructor to initialize head, tail, and size
+        for (E item : list) {
+            addLast(item); // Add each element to the end of the deque
+        }
     }
 
     public boolean isEmpty() {

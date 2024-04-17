@@ -2,8 +2,9 @@ package com.example.final6205;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
+import java.util.*;
+import java.io.File;
 import java.util.HexFormat;
-import java.util.UUID;
 
 import com.google.gson.Gson;
 import redis.clients.jedis.BinaryClient;
@@ -48,11 +49,12 @@ public class DAO {
 
 
     //返回双端队列
-    public void getRestDeque(){
+    public List<String> getRestDeque(){
         java.util.List<String> elements = jedis.lrange(dequeKey, 0, -1);  // 返回队列中所有元素的列表
         for (String element : elements) {
             System.out.println(element);
         }
+        return  elements;
     }
 
     //返回全部文件hashmap，
@@ -70,7 +72,7 @@ public class DAO {
 
 
     }
-        //return filemap;
+
 
     /*把文件加入队列
     /
@@ -99,7 +101,55 @@ public class DAO {
         return check;
 
     }
+    private void quickSort(List<Map.Entry<String, Long>> list, int low, int high) {
+        if (low < high) {
+            int pi = partition(list, low, high);
+
+            quickSort(list, low, pi - 1);
+            quickSort(list, pi + 1, high);
+        }
     }
+
+    private int partition(List<Map.Entry<String, Long>> list, int low, int high) {
+        long pivot = list.get(high).getValue();
+        int i = (low - 1);
+        for (int j = low; j < high; j++) {
+            if (list.get(j).getValue() < pivot) {
+                i++;
+
+                // swap arr[i] and arr[j]
+                Map.Entry<String, Long> temp = list.get(i);
+                list.set(i, list.get(j));
+                list.set(j, temp);
+            }
+        }
+
+        // swap arr[i+1] and arr[high] (or pivot)
+        Map.Entry<String, Long> temp = list.get(i + 1);
+        list.set(i + 1, list.get(high));
+        list.set(high, temp);
+
+        return i + 1;
+    }
+
+    public List<Map.Entry<String, Long>> getFilesWithSizes() {
+        Map<String, String> fileSizeMap = jedis.hgetAll("filesystemSizes");
+        List<Map.Entry<String, Long>> fileList = new ArrayList<>();
+        for (Map.Entry<String, String> entry : fileSizeMap.entrySet()) {
+            fileList.add(new AbstractMap.SimpleEntry<>(entry.getKey(), Long.parseLong(entry.getValue())));
+        }
+
+        // 使用 Sorter 类的方法进行排序
+        Sorter.quickSortFilesBySize(fileList);
+
+        return fileList;
+    }
+    public void saveFileSizeToRedis(String filePath, long fileSize) {
+        jedis.hset("filesystemSizes", filePath, String.valueOf(fileSize));
+        System.out.println("Saved file size to Redis: Path=" + filePath + ", Size=" + fileSize);
+    }
+}
+
 
 
 

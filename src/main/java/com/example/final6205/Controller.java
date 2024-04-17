@@ -79,6 +79,8 @@ public class Controller {
             String uuid = UUID.randomUUID().toString();
             //创建可传入redis的redisFile
             RedisFile redisFile = new RedisFile(outFile, filePath, uuid);
+            long fileSize = outFile.length();
+            dao.saveFileSizeToRedis(filePath, fileSize);
             //把redisFile转换成gson
             Gson gson = new Gson();
             String redisJson = gson.toJson(redisFile);
@@ -163,23 +165,17 @@ public class Controller {
     }
 
     @FXML
-    private void onHistoryButtonClick() {
-        displayFileHistory();
-    }
+    private void onHistoryButtonClick() throws IOException{
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("dog.fxml"));
+        Parent root = loader.load();
 
-    private void displayFileHistory() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        StringBuilder historyContent = new StringBuilder();
-        for (FileHistoryRecord record : fileHistoryRecords) {
-            historyContent.append("Original: ").append(record.getOriginalPath())
-                    .append("\nOperation: ").append(record.getOperation())
-                    .append("\nProcessed: ").append(record.getProcessedPath())
-                    .append("\n\n");
-        }
-        alert.setTitle("File Processing History");
-        alert.setHeaderText("Here is the history of processed files:");
-        alert.setContentText(historyContent.toString());
-        alert.showAndWait();
+        // 创建新窗口的 Stage 和 Scene
+        Stage newStage = new Stage();
+        Scene scene = new Scene(root);
+
+        newStage.setScene(scene);
+        newStage.setTitle("Whole file ");
+        newStage.show();
     }
 
     // Other methods and logic as needed
